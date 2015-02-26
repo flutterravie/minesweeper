@@ -1,0 +1,91 @@
+.sweeper
+	width 100%
+	margin 15px
+	font-family font-standard
+	text-align center
+	&-title
+		font-size 24px
+		padding-bottom 5px
+	&-window
+		display inline-block
+		background #bdbdbd
+		padding 6px
+		border-top 2px solid #fff
+		border-left 2px solid #fff
+		border-bottom 2px solid #7b7b7b
+		border-right 2px solid #7b7b7b
+	&-header
+		position relative
+		height 36px
+		border-top 2px solid #7b7b7b
+		border-left 2px solid #7b7b7b
+		border-bottom 2px solid #fff
+		border-right 2px solid #fff
+		margin-bottom 6px
+	&-face
+		position absolute
+		top 4px
+		left 50%
+		margin-left -12px
+		width 24px
+		height 24px
+		border-top 2px solid #fff
+		border-left 2px solid #fff
+		border-bottom 2px solid #7b7b7b
+		border-right 2px solid #7b7b7b
+		box-shadow 1px 1px 0 0 #7b7b7b, -1px -1px 0 0 #7b7b7b
+		&:before
+			content ''
+			display block
+			position absolute
+			top 2px
+			left 2px
+			sprite($face-default)
+		&_bomb:before
+			sprite($face-bomb)
+		
+	&-field
+		display block
+		border-collapse separate
+		margin 0
+		border-top 2px solid #7b7b7b
+		border-left 2px solid #7b7b7b
+		border-bottom 2px solid #fff
+		border-right 2px solid #fff
+		& tr
+			height 16px
+			vertical-align middle
+		& td
+			position relative
+			width 16px
+			height 16px
+			border-top 1px solid #7b7b7b
+			border-left 1px solid #7b7b7b
+			border-bottom none
+			border-right none
+			font-size 12px
+			padding 3px 0 0 4px
+			&.active
+				border-top 2px solid #fff
+				border-left 2px solid #fff
+				border-bottom 2px solid #7b7b7b
+				border-right 2px solid #7b7b7b
+			&.bombed
+				background red
+				&:before
+					position absolute
+					content ''
+					display block
+					top 1px
+					left 1px
+					sprite($bomb)
+			&.caution:before
+				position absolute
+				content ''
+				display block
+				top 1px
+				left 2px
+				sprite($flag)
+	&-start
+	&-input
+		display none
