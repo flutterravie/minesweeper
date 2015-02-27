@@ -1,6 +1,13 @@
+html
+body
+	width 100%
+	height 100%
+	padding 0
+	margin 0
+
 .sweeper
 	width 100%
-	margin 15px
+	padding 15px
 	font-family font-standard
 	text-align center
 	&-title
@@ -43,6 +50,18 @@
 			sprite($face-default)
 		&_bomb:before
 			sprite($face-bomb)
+		&_wow:before
+			sprite($face-wow)
+		&_win:before
+			sprite($face-win)
+		&_active
+			border-top 2px solid #7b7b7b
+			border-left 2px solid #7b7b7b
+			border-bottom none
+			border-right none
+			&:before
+				top 3px
+				left 3px
 		
 	&-field
 		display block
@@ -65,11 +84,18 @@
 			border-right none
 			font-size 12px
 			padding 3px 0 0 4px
+			&:before
+				position absolute
+				content ''
 			&.active
 				border-top 2px solid #fff
 				border-left 2px solid #fff
 				border-bottom 2px solid #7b7b7b
 				border-right 2px solid #7b7b7b
+				&.mines:before
+					display none
+				&.mines.caution:before
+					display block
 			&.bombed
 				background red
 				&:before
@@ -80,12 +106,30 @@
 					left 1px
 					sprite($bomb)
 			&.caution:before
-				position absolute
-				content ''
-				display block
 				top 1px
 				left 2px
-				sprite($flag)
+				sprite($flag) !important
 	&-start
 	&-input
 		display none
+		
+.mines
+	&:before
+		top 0
+		left 0
+	&-1:before
+		sprite($mines-1)
+	&-2:before
+		sprite($mines-2)
+	&-3:before
+		sprite($mines-3)
+	&-4:before
+		sprite($mines-4)
+	&-5:before
+		sprite($mines-5)
+	&-6:before
+		sprite($mines-6)
+	&-7:before
+		sprite($mines-7)
+	&-8:before
+		sprite($mines-8)

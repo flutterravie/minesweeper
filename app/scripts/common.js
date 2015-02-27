@@ -1,6 +1,7 @@
 $(function () {
 
-	//клонирование строчки
+	var face = $('.js-face');
+
 	$.repeatString = function (value, count) {
         return (
             (new Array(count + 1)).join(value)
@@ -90,6 +91,7 @@ $(function () {
 
 		this.field.mousedown(function (event) {
 			onClick(event);
+			face.addClass('sweeper-face_wow');
 			return(false);
 		});
 		
@@ -113,6 +115,9 @@ $(function () {
 		if (this.bombCells.filter('.bombed').size()) {
 			isEndGame = true;
 		}	else if (!this.nonBombCells.filter('.active').size()) {
+			face.addClass('sweeper-face_win');
+			this.bombCells.addClass('caution');
+			this.field.off();
 			isEndGame = true;
 		}
 	}
@@ -120,6 +125,8 @@ $(function () {
 	function initField () {
 		clearField();
 		buildField();
+
+		face.removeClass().addClass('sweeper-face');
 
 		this.cells = this.field.find('td');
 		this.cells.data('nearBombs',0);
@@ -147,6 +154,47 @@ $(function () {
 				var nearCell = $(this);
 				nearCell.data('nearBombs',(nearCell.data('nearBombs')+1));
 			});
+
+			//console.log(cell.data('nearBombs'));
+
+			/*switch (cell.data('nearBombs')){
+				case '1':
+					console.log('1 mine');
+					break
+				default:
+					console.log('def');				
+			}*/
+		});
+
+		this.cells.each(function (){
+			var cell = $(this);
+
+			switch ($(this).data('nearBombs')){
+				case 1:
+					cell.addClass('mines mines-1');
+					break
+				case 2:
+					cell.addClass('mines mines-2');
+					break
+				case 3:
+					cell.addClass('mines mines-3');
+					break
+				case 4:
+					cell.addClass('mines mines-4');
+					break
+				case 5:
+					cell.addClass('mines mines-5');
+					break
+				case 6:
+					cell.addClass('mines mines-6');
+					break
+				case 7:
+					cell.addClass('mines mines-7');
+					break
+				case 8:
+					cell.addClass('mines mines-8');
+					break
+			}
 		});
 	}
 
@@ -165,8 +213,11 @@ $(function () {
 				checkEndGame();
 				break;
 			case 3:
-				toggleCaution(target);
-				return false;
+				if (!target.is('td.active')){
+					return;
+				} else {
+					toggleCaution(target);
+				}
 				break;
 		}
 	};
@@ -181,7 +232,7 @@ $(function () {
 
 		this.bombCells.addClass('bombed').removeClass('active');
 
-		$('.js-face').addClass('sweeper-face_bomb');
+		face.addClass('sweeper-face_bomb');
 
 		/*this.cells.each(function (index, cellNode){
 			var cell = $(this);
@@ -207,9 +258,8 @@ $(function () {
 		}
 
 		if ((!cell.is('.bomb')) && (cell.data('nearBombs'))){
-			cell.html(cell.data('nearBombs'));
+			return false;
 		} else {
-			cell.html('&nbsp;');
 			cell.data('near')
 				.filter('.active').each(function (index, cellNode){
 					revealCell($(this));
@@ -232,6 +282,18 @@ $(function () {
 
 	mineSweeper($('.js-minesweeper'), 9, 9, 10);
 
+	$(document).mouseup(function (){
+		face.removeClass('sweeper-face_wow');
+	});
+
+	face.mousedown(function (){
+		$(this).addClass('sweeper-face_active');
+	}).mouseup(function (){
+		$(this).removeClass('sweeper-face_active');
+		restart();
+	});
+
+	//disable right click
 	$(document).ready(function() {
 		$(document)[0].oncontextmenu = function() {return false};
 	});
