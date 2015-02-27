@@ -88,12 +88,6 @@ $(function () {
 		this.colCount = (countFilter(colCount) || 10);
 		this.rowCount = (countFilter(rowCount) || 10);
 		this.bombCount = (countFilter(bombCount) || 10);
-
-		this.field.mousedown(function (event) {
-			onClick(event);
-			face.addClass('sweeper-face_wow');
-			return(false);
-		});
 		
 		initField();
 	}
@@ -113,6 +107,7 @@ $(function () {
 		var isEndGame = false;
 
 		if (this.bombCells.filter('.bombed').size()) {
+			this.field.off();
 			isEndGame = true;
 		}	else if (!this.nonBombCells.filter('.active').size()) {
 			face.addClass('sweeper-face_win');
@@ -155,15 +150,6 @@ $(function () {
 				nearCell.data('nearBombs',(nearCell.data('nearBombs')+1));
 			});
 
-			//console.log(cell.data('nearBombs'));
-
-			/*switch (cell.data('nearBombs')){
-				case '1':
-					console.log('1 mine');
-					break
-				default:
-					console.log('def');				
-			}*/
 		});
 
 		this.cells.each(function (){
@@ -196,41 +182,43 @@ $(function () {
 					break
 			}
 		});
+		
+		this.field.mousedown(function (event) {
+			onClick(event);
+			face.addClass('sweeper-face_wow');
+			return(false);
+		});
 	}
 
 	function onClick (event) {
 		var target = $(event.target);
-		switch (event.which) {
-			case 1:
-				if (!target.is('td.active')){
-					return;
-				}
-				if (event.altKey){
+
+		if (!target.is('.active')){
+			return;
+		} else {
+			switch (event.which) {
+				case 1:
+					if (target.is('.caution')){
+						return;
+					} else {
+						revealCell(target);
+					}
+					checkEndGame();
+					break;
+				case 3:
 					toggleCaution(target);
-				} else {
-					revealCell(target);
-				}
-				checkEndGame();
-				break;
-			case 3:
-				if (!target.is('td.active')){
-					return;
-				} else {
-					toggleCaution(target);
-				}
-				break;
-		}
+					break;
+			}
+		};
 	};
 
 	function restart () {
+		this.field.on();
 		initField();
 	}
 
 	function revealField () {
-		this.cells
-			.removeClass('caution');
-
-		this.bombCells.addClass('bombed').removeClass('active');
+		this.bombCells.addClass('bombed').removeClass('caution active');
 
 		face.addClass('sweeper-face_bomb');
 
@@ -259,7 +247,7 @@ $(function () {
 
 		if ((!cell.is('.bomb')) && (cell.data('nearBombs'))){
 			return false;
-		} else {
+		} else if (!cell.is('.bomb')) {
 			cell.data('near')
 				.filter('.active').each(function (index, cellNode){
 					revealCell($(this));
@@ -296,6 +284,36 @@ $(function () {
 	//disable right click
 	$(document).ready(function() {
 		$(document)[0].oncontextmenu = function() {return false};
+	});
+
+	var dropdown = $('.js-menu-dropdown');
+
+	$('.js-menu-btn').click(function (){
+		dropdown.toggle();
+	});
+
+	$('.js-menu-item').click(function (){
+		dropdown.hide();
+	});
+
+	$('html').click(function (){
+		dropdown.hide();		
+	});
+
+	$('.js-menu').click(function (event){
+		event.stopPropagation();
+	});
+
+	$('.js-diff-1').click(function (){
+		mineSweeper($('.js-minesweeper'), 9, 9, 10);
+	});
+
+	$('.js-diff-2').click(function (){
+		mineSweeper($('.js-minesweeper'), 16, 16, 40);
+	});
+
+	$('.js-diff-3').click(function (){
+		mineSweeper($('.js-minesweeper'), 30, 16, 99);
 	});
 
 });

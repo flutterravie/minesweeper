@@ -1,13 +1,30 @@
 .sweeper
-	.sweeper-title
-		| Сапёр
-
-	.sweeper-window
-		.sweeper-header
-			.sweeper-digital.sweeper-points
-			.sweeper-face.js-face
-			.sweeper-digital.sweeper-timer
-		table(cellspacing='2').sweeper-field.js-minesweeper
+	.sweeper-wrapper
+		.sweeper-menu.js-menu
+			.sweeper-menu__title.js-menu-btn Game
+			.sweeper-menu__dropdown.js-menu-dropdown
+				.sweeper-menu__item.js-menu-item.js-diff-1 
+					input(type='radio' name='menu' id='menu-1' hidden checked)
+					label(for='menu-1').sweeper-menu__label 
+						span Beginner
+				.sweeper-menu__item.js-menu-item.js-diff-2
+					input(type='radio' name='menu' id='menu-2' hidden)
+					label(for='menu-2').sweeper-menu__label 
+						span Intermediate
+				.sweeper-menu__item.js-menu-item.js-diff-3
+					input(type='radio' name='menu' id='menu-3' hidden)
+					label(for='menu-3').sweeper-menu__label  
+						span Expert
+				.sweeper-menu__item.js-menu-item.js-custom
+					input(type='radio' name='menu' id='menu-4' hidden)
+					label(for='menu-4').sweeper-menu__label  
+						span Custom…
+		.sweeper-window
+			.sweeper-header
+				.sweeper-digital.sweeper-points
+				.sweeper-face.js-face
+				.sweeper-digital.sweeper-timer
+			table(cellspacing='2').sweeper-field.js-minesweeper
 
 	br
 	button.sweeper-start.js-start Старт
