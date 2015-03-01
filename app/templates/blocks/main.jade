@@ -19,18 +19,20 @@
 					input(type='radio' name='menu' id='menu-4' hidden)
 					label(for='menu-4').sweeper-menu__label  
 						span Custom…
+
+		.sweeper-settings.js-settings
+			.sweeper-settings__label Height:
+				input.sweeper-settings__input.js-rows(value='9')
+			.sweeper-settings__label Width:
+				input.sweeper-settings__input.js-cols(value='9')
+			.sweeper-settings__label Mines:
+				input.sweeper-settings__input.js-bombs(value='10')
+			button.sweeper-settings__btn.sweeper-settings__btn_ok.js-btn-ok OK
+			button.sweeper-settings__btn.sweeper-settings__btn_cancel.js-btn-cancel Cancel
+
 		.sweeper-window
 			.sweeper-header
 				.sweeper-digital.sweeper-points
 				.sweeper-face.js-face
 				.sweeper-digital.sweeper-timer
 			table(cellspacing='2').sweeper-field.js-minesweeper
-
-	br
-	button.sweeper-start.js-start Старт
-	br
-	input.sweeper-input.js-rows(value='10')
-	br
-	input.sweeper-input.js-cols(value='10')
-	br
-	input.sweeper-input.js-bombs(value='10')

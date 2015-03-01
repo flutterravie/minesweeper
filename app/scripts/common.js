@@ -259,15 +259,6 @@ $(function () {
 		cell.toggleClass('caution');
 	}
 
-	$('.js-start').on('click', function () {
-		$('.js-minesweeper').empty();
-		mineSweeper($('.js-minesweeper'),
-			$('.js-rows').val(),
-			$('.js-cols').val(),
-			$('.js-bombs').val()
-		);
-	});
-
 	mineSweeper($('.js-minesweeper'), 9, 9, 10);
 
 	$(document).mouseup(function (){
@@ -283,7 +274,9 @@ $(function () {
 
 	//disable right click
 	$(document).ready(function() {
-		$(document)[0].oncontextmenu = function() {return false};
+		$(document)[0].oncontextmenu = function (){
+			return false
+		};
 	});
 
 	var dropdown = $('.js-menu-dropdown');
@@ -315,5 +308,23 @@ $(function () {
 	$('.js-diff-3').click(function (){
 		mineSweeper($('.js-minesweeper'), 30, 16, 99);
 	});
+
+	$('.js-custom').click(function (){
+		$('.js-settings').show();
+	})
+
+	$('.js-btn-ok').click(function (){
+		mineSweeper($('.js-minesweeper'),
+			$('.js-rows').val(),
+			$('.js-cols').val(),
+			$('.js-bombs').val()
+		);
+		$('.js-settings').hide();
+	})
+
+	$('.js-btn-cancel').click(function (){
+		$('.js-settings').hide();
+	})
+
 
 });

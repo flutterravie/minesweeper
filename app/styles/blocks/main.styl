@@ -11,8 +11,10 @@ body
 	font-family font-standard
 	text-align center
 	&-wrapper
+		position relative
 		display inline-block
 		border 1px solid #d6d6d6
+		
 	&-menu
 		position relative
 		background #f5f6f7
@@ -86,11 +88,57 @@ body
 					&:after
 						top 5px !important
 						left 5px !important
-				
 		&__label
 			display block
 			height 20px
 			line-height 20px
+			
+	&-settings
+		display none
+		position absolute
+		top 10px
+		left 50%
+		margin-left -98px
+		width 196px
+		height 140px
+		font-family font-ui
+		font-size 12px
+		z-index 103
+		border 1px solid #d6d6d6
+		background #f0f0f0
+		padding 33px 0 0 15px
+		&__label
+			display block
+			text-align left
+			width 83px
+			margin-bottom 4px
+			line-height 20px
+			clearfix()
+		&__input
+			width 38px
+			height 20px
+			line-height 18px
+			float right
+		&__btn
+			position absolute
+			right 15px
+			width 58px
+			height 24px
+			line-height 20px
+			border 1px solid #acacac
+			border-radius 0
+			background linear-gradient(to bottom,#efefef,#e5e5e5)
+			transition all .3s ease
+			cursor default
+			&:hover
+				border 1px solid #3399ff
+				background linear-gradient(to bottom,#ecf4fc,#ddedfc)
+			&_ok
+				top 34px
+			&_cancel
+				top 76px
+			
+			
 				
 	&-window
 		display inline-block
