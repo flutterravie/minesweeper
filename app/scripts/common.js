@@ -1,6 +1,7 @@
 $(function () {
 
-	var face = $('.js-face');
+	var bombsLeft = 0,
+	face = $('.js-face');
 
 	$.repeatString = function (value, count) {
         return (
@@ -92,18 +93,17 @@ $(function () {
 		initField();
 	}
 
-	function clearField () {
+	clearField = function() {
 		this.field.empty();
 	}
 
-	function buildField () {
+	buildField = function() {
 		var rowCode = ('<tr>' + $.repeatString('<td class=\'active\'/>', this.colCount) + '</tr>');
 		var fieldCode = $.repeatString(rowCode, this.rowCount);
 		this.field.html(fieldCode);
 	}
 
-	function checkEndGame () {
-		var message = '';
+	checkEndGame = function() {
 		var isEndGame = false;
 
 		if (this.bombCells.filter('.bombed').size()) {
@@ -112,12 +112,13 @@ $(function () {
 		}	else if (!this.nonBombCells.filter('.active').size()) {
 			face.addClass('sweeper-face_win');
 			this.bombCells.addClass('caution');
+			$('.js-timer').addClass('js-timer-pause');
 			this.field.off();
 			isEndGame = true;
 		}
 	}
 
-	function initField () {
+	initField = function() {
 		clearField();
 		buildField();
 
@@ -128,8 +129,7 @@ $(function () {
 
 		this.cells.each(
 			function(index, cellNode){
-				var cell = $(this);
-				cell.data('near', cell.near());
+				$(this).data('near', $(this).near());
 			}
 		);
 
@@ -182,15 +182,23 @@ $(function () {
 					break
 			}
 		});
+
+		bombsLeft = this.bombCount;
+
+		$('.js-points').text(bombsLeft).attr('data-bombs',bombsLeft);
 		
-		this.field.mousedown(function (event) {
-			onClick(event);
+		this.field.on('mousedown', function () {
 			face.addClass('sweeper-face_wow');
+			$('.js-timer').addClass('js-timer-active');
 			return(false);
+		});
+
+		this.cells.on('mousedown', function (event) {
+			onClick(event);
 		});
 	}
 
-	function onClick (event) {
+	onClick = function(event) {
 		var target = $(event.target);
 
 		if (!target.is('.active')){
@@ -212,15 +220,22 @@ $(function () {
 		};
 	};
 
-	function restart () {
+	restart = function() {
 		this.field.on();
 		initField();
+		$('.js-timer').addClass('js-timer-stop').delay(1).queue(function(){
+			$('.js-timer').removeClass('js-timer-pause js-timer-active js-timer-stop').dequeue;
+		});
 	}
 
-	function revealField () {
+	revealField = function() {
 		this.bombCells.addClass('bombed').removeClass('caution active');
 
 		face.addClass('sweeper-face_bomb');
+
+		$('.js-timer').addClass('js-timer-pause');
+
+		this.cells.off();
 
 		/*this.cells.each(function (index, cellNode){
 			var cell = $(this);
@@ -234,7 +249,7 @@ $(function () {
 		});*/
 	}
 
-	function revealCell (cell) {
+	revealCell = function(cell) {
 		var self = this;
 
 		cell
@@ -255,8 +270,18 @@ $(function () {
 		}
 	}
 
-	function toggleCaution (cell) {
-		cell.toggleClass('caution');
+	toggleCaution = function(cell) {
+		if (!cell.hasClass('caution')) {
+			cell.addClass('caution');
+			bombsLeft--;
+		} else {
+			cell.removeClass('caution');
+			bombsLeft++;
+		}
+		if (bombsLeft >= 0) {
+			$('.js-points').text(bombsLeft);
+		}
+		$('.js-points').attr('data-bombs',bombsLeft);
 	}
 
 	mineSweeper($('.js-minesweeper'), 9, 9, 10);
@@ -313,6 +338,10 @@ $(function () {
 		$('.js-settings').show();
 	})
 
+	$('.js-about-btn').click(function (){
+		$('.js-about').show();
+	})
+
 	$('.js-btn-ok').click(function (){
 		mineSweeper($('.js-minesweeper'),
 			$('.js-rows').val(),
@@ -324,7 +353,7 @@ $(function () {
 
 	$('.js-btn-cancel').click(function (){
 		$('.js-settings').hide();
+		$('.js-about').hide();
 	})
-
 
 });

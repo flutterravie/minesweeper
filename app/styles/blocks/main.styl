@@ -88,10 +88,54 @@ body
 					&:after
 						top 5px !important
 						left 5px !important
+			&_about
+				&:after
+					content ''
+					position absolute
+					top -1px
+					left 25px
+					background #bbccdc
+					width 140px
+					height 1px
+				&:hover 
+					& span
+						line-height 18px
+					&:after
+						top -2px
+				& span
+					line-height 20px
 		&__label
 			display block
 			height 20px
 			line-height 20px
+			
+	&-about
+		display none
+		position absolute
+		top 10px
+		left 50%
+		margin-left -98px
+		width 196px
+		height 140px
+		font-family font-ui
+		font-size 12px
+		z-index 103
+		border 1px solid #d6d6d6
+		background #f0f0f0
+		padding 9px 0 0 20px
+		text-align left
+		line-height 16px
+		
+		&__btn
+			position absolute
+			bottom 6px
+			left 50%
+			margin-left -23px
+			width 46px
+			
+		&__copyright
+			padding-top 5px
+			line-height 14px
 			
 	&-settings
 		display none
@@ -149,6 +193,7 @@ body
 		border-left 2px solid #fff
 		border-bottom 2px solid #7b7b7b
 		border-right 2px solid #7b7b7b
+		
 	&-header
 		position relative
 		height 37px
@@ -157,6 +202,32 @@ body
 		border-bottom 2px solid #fff
 		border-right 2px solid #fff
 		margin-bottom 6px
+		
+	&-points
+		position absolute
+		top 4px
+		left 5px
+		width 46px
+		height 25px
+		border-top 1px solid #7b7b7b
+		border-left 1px solid #7b7b7b
+		border-bottom 1px solid #fff
+		border-right 1px solid #fff
+		background #000
+		font-family font-digi
+		font-size 25px
+		letter-spacing 3px
+		color #ff0000
+		padding-left 1px
+		text-align right
+		&:before
+			content '888'
+			position absolute
+			opacity .3
+			top 0
+			left 0
+		
+		
 	&-face
 		position absolute
 		top 5px
@@ -190,6 +261,47 @@ body
 			&:before
 				top 3px
 				left 3px
+				
+	&-timer
+		position absolute
+		top 4px
+		right 5px
+		width 46px
+		height 25px
+		border-top 1px solid #7b7b7b
+		border-left 1px solid #7b7b7b
+		border-bottom 1px solid #fff
+		border-right 1px solid #fff
+		background #000
+		&__cell
+			position relative
+			width 11px
+			height 25px
+			display inline-block
+			overflow hidden
+			&:before
+				content '8'
+				position absolute
+				top 0
+				left 0
+				font-family font-digi
+				font-size 25px
+				color #ff0000
+				opacity .3
+		&__numbers
+			position absolute
+			font-family font-digi
+			font-size 25px
+			color #ff0000
+			line-height 25px
+			animation moveten 1s steps(10, end) infinite
+			animation-duration 10s
+			animation-play-state paused
+			text-align right
+		&__hundred
+			animation-duration 1000s
+		&__ten
+			animation-duration 100s
 		
 	&-field
 		display block
@@ -240,6 +352,25 @@ body
 	&-start
 	&-input
 		display none
+		
+@keyframes moveten {
+	0% {
+		top: 0;
+	}
+	100% {
+		top: -250px;
+	}
+}
+
+.js-timer
+	&-active .sweeper-timer__numbers
+		animation-play-state running
+		
+	&-pause .sweeper-timer__numbers
+		animation-play-state paused
+		
+	&-stop .sweeper-timer__numbers
+		animation none
 		
 .mines
 	&:before

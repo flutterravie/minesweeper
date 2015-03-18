@@ -19,6 +19,8 @@
 					input(type='radio' name='menu' id='menu-4' hidden)
 					label(for='menu-4').sweeper-menu__label  
 						span Custom…
+				.sweeper-menu__item.sweeper-menu__item_about.js-menu-item.js-about-btn
+					span About
 
 		.sweeper-settings.js-settings
 			.sweeper-settings__label Height:
@@ -30,9 +32,30 @@
 			button.sweeper-settings__btn.sweeper-settings__btn_ok.js-btn-ok OK
 			button.sweeper-settings__btn.sweeper-settings__btn_cancel.js-btn-cancel Cancel
 
+		.sweeper-about.js-about
+			span Автор: Берсенёв Антон
+			br
+			span Группа ВМИ-201
+			br
+			span © 2015
+			br
+			.sweeper-about__copyright
+				span Создано на основе
+				br
+				a(href='https://github.com/CSSSR/csssr-project-template') шаблона проекта CSSSR
+				br
+				© felixexter, 2014-2015
+			button.sweeper-about__btn.js-btn-cancel OK
+
 		.sweeper-window
 			.sweeper-header
-				.sweeper-digital.sweeper-points
+				.sweeper-digital.sweeper-points.js-points 000
 				.sweeper-face.js-face
-				.sweeper-digital.sweeper-timer
+				.sweeper-digital.sweeper-timer.js-timer
+					.sweeper-timer__cell
+						.sweeper-timer__numbers.sweeper-timer__hundred 0 1 2 3 4 5 6 7 8 9
+					.sweeper-timer__cell
+						.sweeper-timer__numbers.sweeper-timer__ten 0 1 2 3 4 5 6 7 8 9
+					.sweeper-timer__cell
+						.sweeper-timer__numbers 0 1 2 3 4 5 6 7 8 9
 			table(cellspacing='2').sweeper-field.js-minesweeper
