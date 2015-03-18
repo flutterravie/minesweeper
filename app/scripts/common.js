@@ -1,276 +1,318 @@
 $(function () {
 
 	var bombsLeft = 0,
-	face = $('.js-face');
+	face = $('.js-face'),
+	dropdown = $('.js-menu-dropdown');
 
+	// повторяем одну и ту же строчку (value) указанное число раз (count)
 	$.repeatString = function (value, count) {
-        return (
-            (new Array(count + 1)).join(value)
-        );
-    }
+		return (
+			(new Array(count + 1)).join(value)
+		);
+	};
 
-    $.randRange = function (minValue, maxValue) {
-    	var diff = (maxValue - minValue);
-    	var randomValue = Math.floor(Math.random() * diff);
-    	return(minValue + randomValue);
-    }
+	// получаем случайное значение между minValue и maxValue
+	$.randRange = function (minValue, maxValue) {
+		var diff = (maxValue - minValue);
+		var randomValue = Math.floor(Math.random() * diff);
+		return (minValue + randomValue);
+	};
 
-    $.fn.randomFilter = function (size) {
-    	size = Math.min(size, this.size());
+	// выбираем опр. количество (size) случайных элементов из указанного множества элементов
+	$.fn.randomFilter = function (size) {
 
-    	var indexes = new Array(this.size());
+		// проверяем, что больше — size или число элементов в указанном множестве
+		size = Math.min(size, this.size());
 
-    	for (var i = 0; i < this.size(); i++){
-    		indexes[i] = i;
-    	}
+		// массив индексов элементов
+		var indexes = new Array(this.size());
 
-    	var randomIndexes = {};
+		// назначаем каждому элементу массива его номер в качестве значения
+		for (var i = 0; i < this.size(); i++) {
+			indexes[i] = i;
+		}
 
-    	for (var i = 0; i < size; i++){
-    		randomIndex = $.randRange(0, (indexes.length - 1));
-    		randomIndexes[indexes[randomIndex]] = true;
-    		indexes.splice(randomIndex, 1);
-    	}
+		// здесь будем хранить выбранные случайно индексы
+		var randomIndexes = {};
 
-    	return(
-    		this.filter(
-    			function(index) {
-    				return(index in randomIndexes);
-    			}
-    		)
-    	);
-    }
+		// выбираем size случайных элементов
+		for (var i = 0; i < size; i++) {
+			randomIndex = $.randRange(0, (indexes.length - 1));
+			randomIndexes[indexes[randomIndex]] = true;
+			indexes.splice(randomIndex, 1);
+		}
 
-    $.fn.near = function () {
-    	var nearNodes = $([]),
-    	currentCell = $(this),
-    	currentRow = currentCell.parent('tr'),
-    	tbody = currentRow.parent(),
-    	prevRow = currentRow.prev(),
-    	nextRow = currentRow.next(),
-    	currentCellIndex = currentRow.find('td').index(currentCell);
+		// возвращаем полученный список элементов
+		return (
+			this.filter(
+				function (index) {
+					return (index in randomIndexes);
+				}
+			)
+		);
+	};
 
-    	if (prevRow.size()){
-    		var prevRowCell = prevRow.find('td:eq('+currentCellIndex+')');
+	// обозначаем для каждой клетки все клетки, находящиеся рядом
+	$.fn.near = function () {
+		var nearNodes = $([]),
+		currentCell = $(this),
+		currentRow = currentCell.parent('tr'),
+		prevRow = currentRow.prev(),
+		nextRow = currentRow.next(),
+		currentCellIndex = currentRow.find('td').index(currentCell);
 
-    		nearNodes = nearNodes
-    			.add(prevRowCell.prev())
-    			.add(prevRowCell)
-    			.add(prevRowCell.next());
-    	};
+		// если есть предыдущий ряд, добавляем клетки из него
+		if (prevRow.size()) {
+			var prevRowCell = prevRow.find('td:eq(' + currentCellIndex + ')');
 
-    	nearNodes = nearNodes
-    		.add(currentCell.prev())
-    		.add(currentCell.next());
+			nearNodes = nearNodes
+				.add(prevRowCell.prev())
+				.add(prevRowCell)
+				.add(prevRowCell.next());
+		}
 
-    	if (nextRow.size()){
-    		var nextRowCell = nextRow.find('td:eq('+currentCellIndex+')');
+		// если есть клетки слева/справа, добавляем их
+		nearNodes = nearNodes
+			.add(currentCell.prev())
+			.add(currentCell.next());
 
-    		nearNodes = nearNodes
-    			.add(nextRowCell.prev())
-    			.add(nextRowCell)
-    			.add(nextRowCell.next());
-    	};
+		// если есть предыдущий ряд, добавляем клетки из него
+		if (nextRow.size()) {
+			var nextRowCell = nextRow.find('td:eq(' + currentCellIndex + ')');
 
-    	return(nearNodes);
-    }
+			nearNodes = nearNodes
+				.add(nextRowCell.prev())
+				.add(nextRowCell)
+				.add(nextRowCell.next());
+		}
 
-    function countFilter (input) {
-    	input = parseInt(input);
-    	if (input < 0) {
-    		input = Math.abs(input);
-    	};
-		return(input);
-    }
+		// возвращаем все соседние клетки
+		return (nearNodes);
+	};
+
+	// фильтр вводимых в основную функцию значений
+	// превращает строковые значения в цифры, а если они отрицательны, делает их положительными
+	function countFilter(input) {
+		input = parseInt(input);
+		if (input < 0) {
+			input = Math.abs(input);
+		}
+		return (input);
+	}
 
 	function mineSweeper(selector, colCount, rowCount, bombCount) {
+		// вводим основные переменные: блок поля, количество колонок, столбцов и бомб
 		var self = this;
 		this.field = $(selector);
 		this.colCount = (countFilter(colCount) || 10);
 		this.rowCount = (countFilter(rowCount) || 10);
 		this.bombCount = (countFilter(bombCount) || 10);
-		
+		if (this.bombCount > (this.colCount * this.rowCount)) {
+			this.bombCount = this.colCount * this.rowCount;
+		}
+
+		// запускаем создание поля
 		initField();
 	}
 
-	clearField = function() {
+	// функция для очистки поля
+	// при запуске удаляет всё содержимое this.field
+	clearField = function () {
 		this.field.empty();
-	}
+	};
 
-	buildField = function() {
+	// функция для построения кода поля
+	// при запуске создаёт html-таблицу с указанным количеством столбцов и колонок
+	buildField = function () {
 		var rowCode = ('<tr>' + $.repeatString('<td class=\'active\'/>', this.colCount) + '</tr>');
 		var fieldCode = $.repeatString(rowCode, this.rowCount);
 		this.field.html(fieldCode);
-	}
+	};
 
-	checkEndGame = function() {
+	// функция для проверки окончания игры
+	checkEndGame = function () {
 		var isEndGame = false;
 
+		// если одна из бомб взорвалась
 		if (this.bombCells.filter('.bombed').size()) {
 			this.field.off();
 			isEndGame = true;
-		}	else if (!this.nonBombCells.filter('.active').size()) {
+		// если все клетки без бомб открыты
+		} else if (!this.nonBombCells.filter('.active').size()) {
 			face.addClass('sweeper-face_win');
 			this.bombCells.addClass('caution');
 			$('.js-timer').addClass('js-timer-pause');
+			bombsLeft = 0;
+			$('.js-points').attr('data-bombs', bombsLeft).text(bombsLeft);
 			this.field.off();
 			isEndGame = true;
 		}
-	}
+	};
 
-	initField = function() {
+	// функция для работы поля
+	initField = function () {
 		clearField();
 		buildField();
 
 		face.removeClass().addClass('sweeper-face');
 
+		// находим все клетки поля и получаем доступ к ним через одну переменную
 		this.cells = this.field.find('td');
-		this.cells.data('nearBombs',0);
 
+		// начальное значение бомб в соседних клетках
+		this.cells.data('nearBombs', 0);
+
+		// для каждой клетки обозначаем соседей
 		this.cells.each(
-			function(index, cellNode){
+			function (index, cellNode) {
 				$(this).data('near', $(this).near());
 			}
 		);
 
+		// «закладываем бомбы» в случайные клетки
 		this.bombCells = this.cells
 			.randomFilter(this.bombCount)
 			.addClass('bomb');
 
+		// находим все клетки без бомб
 		this.nonBombCells = this.cells.filter(function (index) {
-			return(self.bombCells.index(this) == -1);
+			return (self.bombCells.index(this) === -1);
 		});
 
-		this.bombCells.each(function (index, node){
+		// для всех клеток рядом с бомбами обозначаем количество бомб
+		this.bombCells.each(function (index, node) {
 			var cell = $(this),
 			nearCells = cell.data('near');
 
 			nearCells.each(function () {
 				var nearCell = $(this);
-				nearCell.data('nearBombs',(nearCell.data('nearBombs')+1));
+				nearCell.data('nearBombs', (nearCell.data('nearBombs') + 1));
 			});
 
 		});
 
-		this.cells.each(function (){
+		// отображаем количество бомб при нажатии на клетку
+		this.cells.each(function () {
 			var cell = $(this);
-
 			switch ($(this).data('nearBombs')){
 				case 1:
 					cell.addClass('mines mines-1');
-					break
+					break;
 				case 2:
 					cell.addClass('mines mines-2');
-					break
+					break;
 				case 3:
 					cell.addClass('mines mines-3');
-					break
+					break;
 				case 4:
 					cell.addClass('mines mines-4');
-					break
+					break;
 				case 5:
 					cell.addClass('mines mines-5');
-					break
+					break;
 				case 6:
 					cell.addClass('mines mines-6');
-					break
+					break;
 				case 7:
 					cell.addClass('mines mines-7');
-					break
+					break;
 				case 8:
 					cell.addClass('mines mines-8');
-					break
+					break;
 			}
 		});
 
+		// обозначаем, сколько бомб есть на поле (левый счётчик сверху)
 		bombsLeft = this.bombCount;
+		$('.js-points').text(bombsLeft).attr('data-bombs', bombsLeft);
 
-		$('.js-points').text(bombsLeft).attr('data-bombs',bombsLeft);
-		
+		// при нажатии в область поля начинается отсчёт времени в таймере (правый счётчик сверху)
 		this.field.on('mousedown', function () {
 			face.addClass('sweeper-face_wow');
 			$('.js-timer').addClass('js-timer-active');
-			return(false);
+			return false;
 		});
 
+		// апускаем функцию нажатия на клетку при нажатии на клетку (sic!)
 		this.cells.on('mousedown', function (event) {
 			onClick(event);
 		});
-	}
+	};
 
-	onClick = function(event) {
+	// функция нажатия на клетку
+	onClick = function (event) {
 		var target = $(event.target);
 
-		if (!target.is('.active')){
+		// если на клетку нельзя нажать, то не нажимаем
+		if (!target.is('.active')) {
 			return;
+		// если можно нажать…
 		} else {
 			switch (event.which) {
+				// …и нажата ЛКМ (параметр 1 у функции switch), то открываем клетку, если на ней нет флажка и проверяем, не окончена ли игра
 				case 1:
-					if (target.is('.caution')){
+					if (target.is('.caution')) {
 						return;
 					} else {
 						revealCell(target);
 					}
 					checkEndGame();
 					break;
+				// …и нажата ПКМ (параметр 3 у функции switch), то ставим/убираем флажок
 				case 3:
 					toggleCaution(target);
 					break;
 			}
-		};
+		}
 	};
 
-	restart = function() {
+	// функция перезапуска игры
+	restart = function () {
 		this.field.on();
 		initField();
-		$('.js-timer').addClass('js-timer-stop').delay(1).queue(function(){
-			$('.js-timer').removeClass('js-timer-pause js-timer-active js-timer-stop').dequeue;
-		});
-	}
+		$('.js-timer').removeClass('js-timer-pause js-timer-active');
+	};
 
-	revealField = function() {
+	// функция открытия поля
+	revealField = function () {
+		// показываем клетки с бомбами
 		this.bombCells.addClass('bombed').removeClass('caution active');
 
 		face.addClass('sweeper-face_bomb');
 
+		// останавливаем таймер
 		$('.js-timer').addClass('js-timer-pause');
 
+		// запрещаем нажатие на поле
 		this.cells.off();
+	};
 
-		/*this.cells.each(function (index, cellNode){
-			var cell = $(this);
-			if (cell.data('nearBombs')){
-				cell.html(cell.data('nearBombs'));
-			}
+	// функция открытия клетки
+	revealCell = function (cell) {
 
-			if (cell.is('.bomb')){
-				cell.html('&nbsp;');
-			}
-		});*/
-	}
+		// показываем, что клетка нажата
+		cell.removeClass('active');
 
-	revealCell = function(cell) {
-		var self = this;
-
-		cell
-			.removeClass('active')
-			.removeClass('caution');
-
-		if ((cell).is('.bomb')){
+		// если в ней была бомба, показываем всё поле
+		if ((cell).is('.bomb')) {
 			revealField();
 		}
 
-		if ((!cell.is('.bomb')) && (cell.data('nearBombs'))){
+		// если бомб нет, но они есть рядом, то открывается эта клетка
+		if ((!cell.is('.bomb')) && (cell.data('nearBombs'))) {
 			return false;
 		} else if (!cell.is('.bomb')) {
+		// а если рядом бомб тоже нет, то открываем каждую из соседних клеток;
+		// клетки будут открываться, пока не образуется граница из клеток с соседями-бомбами
 			cell.data('near')
-				.filter('.active').each(function (index, cellNode){
+				.filter('.active').each(function (index, cellNode) {
 					revealCell($(this));
 				});
 		}
-	}
+	};
 
-	toggleCaution = function(cell) {
+	// ставим на клетку флажок и изменяем счётчик бомб
+	toggleCaution = function (cell) {
 		if (!cell.hasClass('caution')) {
 			cell.addClass('caution');
 			bombsLeft--;
@@ -281,79 +323,85 @@ $(function () {
 		if (bombsLeft >= 0) {
 			$('.js-points').text(bombsLeft);
 		}
-		$('.js-points').attr('data-bombs',bombsLeft);
-	}
+		$('.js-points').attr('data-bombs', bombsLeft);
+	};
 
+	// изначально игра запускается в стандартной раскладке 9х9 с 10 бомбами
 	mineSweeper($('.js-minesweeper'), 9, 9, 10);
 
-	$(document).mouseup(function (){
+	$(document).mouseup(function () {
 		face.removeClass('sweeper-face_wow');
 	});
 
-	face.mousedown(function (){
+	// перезапуск игры при нажатии на лицо сверху
+	face.mousedown(function () {
 		$(this).addClass('sweeper-face_active');
-	}).mouseup(function (){
+	}).mouseup(function () {
 		$(this).removeClass('sweeper-face_active');
 		restart();
 	});
 
-	//disable right click
-	$(document).ready(function() {
-		$(document)[0].oncontextmenu = function (){
-			return false
+	// выключаем нажатие ПКМ
+	$(document).ready(function () {
+		$(document)[0].oncontextmenu = function () {
+			return false;
 		};
 	});
 
-	var dropdown = $('.js-menu-dropdown');
-
-	$('.js-menu-btn').click(function (){
+	// открываем/прячем меню
+	$('.js-menu-btn').click(function () {
 		dropdown.toggle();
 	});
 
-	$('.js-menu-item').click(function (){
+	$('.js-menu-item').click(function () {
 		dropdown.hide();
 	});
 
-	$('html').click(function (){
-		dropdown.hide();		
+	$('html').click(function () {
+		dropdown.hide();
 	});
 
-	$('.js-menu').click(function (event){
+	$('.js-menu').click(function (event) {
 		event.stopPropagation();
 	});
 
-	$('.js-diff-1').click(function (){
+	// перезапускаем игру при выборе одной из стандартных сложностей
+	$('.js-diff-1').click(function () {
 		mineSweeper($('.js-minesweeper'), 9, 9, 10);
 	});
 
-	$('.js-diff-2').click(function (){
+	$('.js-diff-2').click(function () {
 		mineSweeper($('.js-minesweeper'), 16, 16, 40);
 	});
 
-	$('.js-diff-3').click(function (){
+	$('.js-diff-3').click(function () {
 		mineSweeper($('.js-minesweeper'), 30, 16, 99);
 	});
 
-	$('.js-custom').click(function (){
+	// открываем окно запуска своей игры
+	$('.js-custom').click(function () {
 		$('.js-settings').show();
-	})
+	});
 
-	$('.js-about-btn').click(function (){
-		$('.js-about').show();
-	})
-
-	$('.js-btn-ok').click(function (){
+	// при нажатии на OK запускаем игру со своими параметрами и закрываем окно запуска
+	$('.js-btn-ok').click(function () {
 		mineSweeper($('.js-minesweeper'),
 			$('.js-rows').val(),
 			$('.js-cols').val(),
 			$('.js-bombs').val()
 		);
 		$('.js-settings').hide();
-	})
+	});
 
-	$('.js-btn-cancel').click(function (){
+	// открываем окно информации об игре
+	$('.js-about-btn').click(function () {
+		$('.js-about').show();
+	});
+
+	// закрываем окно при нажатии на кнопку закрытия
+	$('.js-btn-cancel').click(function () {
 		$('.js-settings').hide();
 		$('.js-about').hide();
-	})
+	});
 
 });

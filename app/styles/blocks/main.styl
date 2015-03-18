@@ -181,9 +181,7 @@ body
 				top 34px
 			&_cancel
 				top 76px
-			
-			
-				
+					
 	&-window
 		display inline-block
 		background #bdbdbd
@@ -294,14 +292,15 @@ body
 			font-size 25px
 			color #ff0000
 			line-height 25px
-			animation moveten 1s steps(10, end) infinite
+			animation none
 			animation-duration 10s
-			animation-play-state paused
 			text-align right
 		&__hundred
-			animation-duration 1000s
+			animation-duration 1000s !important
 		&__ten
-			animation-duration 100s
+			animation-duration 100s !important
+		&__one
+			animation-duration 10s !important
 		
 	&-field
 		display block
@@ -364,13 +363,11 @@ body
 
 .js-timer
 	&-active .sweeper-timer__numbers
+		animation moveten 1s steps(10, end) infinite
 		animation-play-state running
 		
 	&-pause .sweeper-timer__numbers
 		animation-play-state paused
-		
-	&-stop .sweeper-timer__numbers
-		animation none
 		
 .mines
 	&:before
