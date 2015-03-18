@@ -104,10 +104,9 @@ $(function () {
 
 	function mineSweeper(selector, colCount, rowCount, bombCount) {
 		// вводим основные переменные: блок поля, количество колонок, столбцов и бомб
-		var self = this;
 		this.field = $(selector);
-		this.colCount = (countFilter(colCount) || 10);
-		this.rowCount = (countFilter(rowCount) || 10);
+		this.colCount = (countFilter(colCount) || 9);
+		this.rowCount = (countFilter(rowCount) || 9);
 		this.bombCount = (countFilter(bombCount) || 10);
 		if (this.bombCount > (this.colCount * this.rowCount)) {
 			this.bombCount = this.colCount * this.rowCount;
@@ -166,7 +165,7 @@ $(function () {
 
 		// для каждой клетки обозначаем соседей
 		this.cells.each(
-			function (index, cellNode) {
+			function () {
 				$(this).data('near', $(this).near());
 			}
 		);
@@ -182,7 +181,7 @@ $(function () {
 		});
 
 		// для всех клеток рядом с бомбами обозначаем количество бомб
-		this.bombCells.each(function (index, node) {
+		this.bombCells.each(function () {
 			var cell = $(this),
 			nearCells = cell.data('near');
 
@@ -307,7 +306,7 @@ $(function () {
 		// а если рядом бомб тоже нет, то открываем каждую из соседних клеток;
 		// клетки будут открываться, пока не образуется граница из клеток с соседями-бомбами
 			cell.data('near')
-				.filter('.active').each(function (index, cellNode) {
+				.filter('.active').each(function () {
 					revealCell($(this));
 				});
 		}
