@@ -1,8 +1,10 @@
 $(function () {
 
 	var bombsLeft = 0,
-	face = $('.js-face'),
-	dropdown = $('.js-menu-dropdown');
+	face = $('.js-face'), // блок лица сверху; изменяется при определённых событиях
+	dropdown = $('.js-menu-dropdown'), // выпадающее меню
+	timer = $('.js-timer'), // таймер (слева сверху)
+	points = $('.js-points'); // счётчик очков (справа сверху)
 
 	// повторяем одну и ту же строчку (value) указанное число раз (count)
 	$.repeatString = function (value, count) {
@@ -141,9 +143,9 @@ $(function () {
 		} else if (!this.nonBombCells.filter('.active').size()) {
 			face.addClass('sweeper-face_win');
 			this.bombCells.addClass('caution');
-			$('.js-timer').addClass('js-timer-pause');
+			timer.addClass('js-timer-pause');
 			bombsLeft = 0;
-			$('.js-points').attr('data-bombs', bombsLeft).text(bombsLeft);
+			points.attr('data-bombs', bombsLeft).text(bombsLeft);
 			this.field.off();
 			isEndGame = true;
 		}
@@ -224,12 +226,12 @@ $(function () {
 
 		// обозначаем, сколько бомб есть на поле (левый счётчик сверху)
 		bombsLeft = this.bombCount;
-		$('.js-points').text(bombsLeft).attr('data-bombs', bombsLeft);
+		points.text(bombsLeft).attr('data-bombs', bombsLeft);
 
 		// при нажатии в область поля начинается отсчёт времени в таймере (правый счётчик сверху)
 		this.field.on('mousedown', function () {
 			face.addClass('sweeper-face_wow');
-			$('.js-timer').addClass('js-timer-active');
+			timer.addClass('js-timer-active');
 			return false;
 		});
 
@@ -270,7 +272,7 @@ $(function () {
 	restart = function () {
 		this.field.on();
 		initField();
-		$('.js-timer').removeClass('js-timer-pause js-timer-active');
+		timer.removeClass('js-timer-pause js-timer-active');
 	};
 
 	// функция открытия поля
@@ -281,7 +283,7 @@ $(function () {
 		face.addClass('sweeper-face_bomb');
 
 		// останавливаем таймер
-		$('.js-timer').addClass('js-timer-pause');
+		timer.addClass('js-timer-pause');
 
 		// запрещаем нажатие на поле
 		this.cells.off();
@@ -321,9 +323,9 @@ $(function () {
 			bombsLeft++;
 		}
 		if (bombsLeft >= 0) {
-			$('.js-points').text(bombsLeft);
+			points.text(bombsLeft);
 		}
-		$('.js-points').attr('data-bombs', bombsLeft);
+		points.attr('data-bombs', bombsLeft);
 	};
 
 	// изначально игра запускается в стандартной раскладке 9х9 с 10 бомбами
