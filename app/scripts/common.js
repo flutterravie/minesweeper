@@ -369,14 +369,17 @@ $(function () {
 	// перезапускаем игру при выборе одной из стандартных сложностей
 	$('.js-diff-1').click(function () {
 		mineSweeper($('.js-minesweeper'), 9, 9, 10);
+		timer.removeClass('js-timer-pause js-timer-active');
 	});
 
 	$('.js-diff-2').click(function () {
 		mineSweeper($('.js-minesweeper'), 16, 16, 40);
+		timer.removeClass('js-timer-pause js-timer-active');
 	});
 
 	$('.js-diff-3').click(function () {
 		mineSweeper($('.js-minesweeper'), 30, 16, 99);
+		timer.removeClass('js-timer-pause js-timer-active');
 	});
 
 	// открываем окно запуска своей игры
